@@ -8,6 +8,7 @@ const messages = {
 }
 
 class BotController {
+
   constructor(private readonly bot: BotModule) {
     this.bot = bot
   }
