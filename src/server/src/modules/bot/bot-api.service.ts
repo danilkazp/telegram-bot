@@ -6,7 +6,11 @@ class BotApiService {
   }
 
   sendMessage = (...args) => {
-    this.bot.telegramBot.sendMessage(...args)
+    return this.bot.telegramBot.sendMessage(...args)
+  }
+
+  editMessageText = (...args) => {
+    return this.bot.telegramBot.editMessageText(...args)
   }
 }
 

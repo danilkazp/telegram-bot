@@ -1,26 +1,27 @@
 import 'reflect-metadata'
-import PhraseModule from 'modules/phrase/phrase.module'
 
 import TelegramBot from 'node-telegram-bot-api'
 
 import BotApiService from 'modules/bot/bot-api.service'
 import BotController from 'modules/bot/bot.controller'
-import BotService from 'modules/bot/bot.service'
 import { matchMessage } from 'modules/bot/utils/bot.utils'
+import PhraseModule from 'modules/phrase/phrase.module'
+import TranslatorModule from 'modules/translator/translator.module'
 
 class BotModule {
   public telegramBot: any
   public botController: BotController
   public phraseModule: PhraseModule
+  public translatorModule: TranslatorModule
   public services: Record<string, any> = {}
   private subscribersOfCommands: Record<string, any>[] = []
   private subscribersOfMessages: Record<string, any>[] = []
 
   constructor() {
     this.init()
-    this.initModules()
     this.initServices()
     this.initController()
+    this.initModules()
     this.initCommandSubscribers()
     this.initMessageSubscribers()
   }
@@ -33,14 +34,13 @@ class BotModule {
   }
 
   initModules() {
-    this.phraseModule = new PhraseModule()
+    this.translatorModule = new TranslatorModule()
+    this.phraseModule = new PhraseModule(this)
   }
-
 
   initServices() {
     this.services = {
       botApiService: new BotApiService(this),
-      botService: new BotService(this),
     }
   }
 
@@ -86,7 +86,7 @@ class BotModule {
   initMessageSubscribers() {
     this.telegramBot.on('message', async (msg) => {
       console.log('###-msg', msg)
-      
+
       const foundSubscriber = this.subscribersOfMessages.find((subscriber) => {
         return matchMessage(subscriber.matchMessage, msg.text)
       })

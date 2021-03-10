@@ -1,23 +1,37 @@
 import { Model, MongooseFilterQuery, QueryUpdateOptions } from 'mongoose'
 
-export class PhraseRepository {
+import { IPagination, IPhrase } from 'modules/phrase/phrase.interface'
 
-  constructor(
-    private readonly phraseModel
-  ) {
+export class PhraseRepository {
+  constructor(private readonly phraseModel) {
     this.phraseModel = phraseModel
   }
-  //
-  // private notFound(): void {
-  //   notFoundResponse('User not found');
-  // }
-  //
-  async create(phraseDto): Promise<any> {
-    return await this.phraseModel.create(phraseDto);
+
+  private notFound(): string {
+    return 'Phrase not found'
   }
 
-  async list(phraseDto?): Promise<any> {
-    return await this.phraseModel.find(phraseDto);
+  async create(phraseDto: IPhrase): Promise<IPhrase> {
+    return await this.phraseModel.create(phraseDto)
+  }
+
+  async item(phraseDto?): Promise<IPhrase> {
+    return await this.phraseModel.findOne(phraseDto)
+  }
+
+  async getCount(phraseDto?): Promise<number> {
+    return await this.phraseModel.count(phraseDto)
+  }
+
+  async list(phraseDto?, pagination?: IPagination): Promise<IPhrase[]> {
+    if (pagination) {
+      return await this.phraseModel
+        .find(phraseDto)
+        .skip(pagination.offset)
+        .limit(pagination.limit)
+    }
+
+    return await this.phraseModel.find(phraseDto)
   }
   //
   // async getList(

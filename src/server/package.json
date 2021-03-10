@@ -15,9 +15,11 @@
     "dotenv": "^8.2.0",
     "envalid": "^6.0.1",
     "express": "^4.17.1",
+    "google-translate-api-browser": "^1.1.71",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.11",
-    "node-telegram-bot-api": "^0.51.0"
+    "node-telegram-bot-api": "^0.51.0",
+    "reverso-api": "^2.16.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
@@ -44,6 +46,7 @@
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
     "husky": "^5.0.9",
+    "lodash": "^4.17.21",
     "nodemon": "^2.0.2",
     "prettier": "^2.2.1",
     "prettier-plugin-sorted": "^2.0.0",

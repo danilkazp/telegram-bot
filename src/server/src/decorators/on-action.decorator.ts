@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 
-const callMethodName = 'onText'
-const OnText = (matchText: string | RegExp) => {
+const callMethodName = 'on'
+const OnAction = (matchText: string | RegExp) => {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const metaData = {
       callMethod: callMethodName,
@@ -11,4 +11,4 @@ const OnText = (matchText: string | RegExp) => {
   }
 }
 
-export default OnText
+export default OnAction

@@ -2,13 +2,17 @@ import mongoose from 'mongoose'
 
 const PhraseSchema = new mongoose.Schema(
   {
+    userId: {
+      type: String,
+      default: null
+    },
     text: {
       type: String,
       default: null,
     },
-    translatedText: {
-      type: String,
-      default: null,
+    translation: {
+      type: Array,
+      default: [],
     },
     examples: {
       type: Array,
