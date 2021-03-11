@@ -1,7 +1,7 @@
 import { callbackQueryHandlers } from 'modules/bot/bot.controller'
 import {
   getInlineKeyboards,
-  getInlineKeyboardsPagination,
+  getInlineKeyboardsPagination, getPageByPagination,
 } from 'modules/bot/utils/bot.utils'
 import { defaultPagination } from 'modules/phrase/phrase.constants'
 import { IPagination, IPhrase } from 'modules/phrase/phrase.interface'
@@ -35,8 +35,6 @@ class PhraseService {
   }
 
   findList = async (phraseDto?, pagination?: IPagination) => {
-    console.log('###-pagination', pagination)
-
     return await this.phraseRepository.list(phraseDto, pagination)
   }
 
@@ -48,9 +46,11 @@ class PhraseService {
     phraseDto,
     phraseListPagination = defaultPagination,
   ) => {
-    const { offset, limit } = phraseListPagination
+    const { limit } = phraseListPagination
     const phrasesCount = await this.getCount(phraseDto)
+    const currentPage = getPageByPagination(phraseListPagination);
     const allPages = +(phrasesCount / limit).toFixed(0)
+
     const foundPhrases = await this.findList(phraseDto, phraseListPagination)
     const foundPhrasesList = foundPhrases.map((phrase) => {
       return {
@@ -63,7 +63,7 @@ class PhraseService {
 
     return [
       ...phrasesInlineKeyboards,
-      getInlineKeyboardsPagination(offset / 10, allPages),
+      getInlineKeyboardsPagination(currentPage, allPages),
     ]
   }
 }

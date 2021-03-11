@@ -1,8 +1,5 @@
 import BotModule from 'modules/bot/bot.module'
-import {
-  getInlineKeyboards,
-  getInlineKeyboardsPagination,
-} from 'modules/bot/utils/bot.utils'
+import { getPaginationByPage } from 'modules/bot/utils/bot.utils'
 
 import Message from 'src/decorators/message.decorator'
 import OnAction from 'src/decorators/on-action.decorator'
@@ -13,10 +10,15 @@ const messages = {
   getPhrase: 'Get phrase',
 }
 
+const titles = {
+  phrasesList: 'Your phrases:',
+}
+
 export const callbackQueryHandlers = {
   handleGetPhrase: 'handleGetPhrase',
   handlePhrasesPagination: 'handlePhrasesPagination',
 }
+
 const matchTextBetweenSquareBrackets = /\[(.*)\]/
 
 class BotController {
@@ -43,38 +45,29 @@ class BotController {
   }
 
   [callbackQueryHandlers.handleGetPhrase](query) {
-    console.log('###-query', query)
     const callbackQueryText = query.data.replace(
       matchTextBetweenSquareBrackets,
       '',
     )
-
-    console.log('###-callbackQueryText', callbackQueryText)
   }
 
-  [callbackQueryHandlers.handlePhrasesPagination](query) {
-    console.log('###-query', query)
+  async [callbackQueryHandlers.handlePhrasesPagination](query): Promise<any> {
     const { chat, message_id } = query.message
-    const callbackQueryText = query.data.replace(
-      matchTextBetweenSquareBrackets,
-      '',
+    const { phraseService } = this.bot.phraseModule
+    const nextPage = +query.data.replace(matchTextBetweenSquareBrackets, '')
+    const nextPagePagination = getPaginationByPage(nextPage)
+    const phrasesInlineKeywords = await phraseService.getPhrasesInlineKeywords(
+      {
+        userId: chat.id,
+      },
+      nextPagePagination,
     )
-    this.bot.services.botApiService.editMessageText('Выберете шаблон', {
+
+    this.bot.services.botApiService.editMessageText(titles.phrasesList, {
       chat_id: chat.id,
       message_id: message_id,
       reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Пустой шаблон №1',
-              callback_data: COMMAND_TEMPLATE1,
-            },
-            {
-              text: 'Пустой шаблон №2',
-              callback_data: COMMAND_TEMPLATE2,
-            },
-          ],
-        ],
+        inline_keyboard: phrasesInlineKeywords,
       },
     })
   }
@@ -96,11 +89,15 @@ class BotController {
       userId,
     })
 
-    this.bot.services.botApiService.sendMessage(msg.chat.id, 'Your phrases:', {
-      reply_markup: {
-        inline_keyboard: phrasesInlineKeywords,
+    this.bot.services.botApiService.sendMessage(
+      msg.chat.id,
+      titles.phrasesList,
+      {
+        reply_markup: {
+          inline_keyboard: phrasesInlineKeywords,
+        },
       },
-    })
+    )
   }
 
   @Message(messages.getPhrase)
