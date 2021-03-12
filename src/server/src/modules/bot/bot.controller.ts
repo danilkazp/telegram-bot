@@ -1,5 +1,6 @@
 import BotModule from 'modules/bot/bot.module'
 import { getPaginationByPage } from 'modules/bot/utils/bot.utils'
+import { formatPhraseForSend } from 'modules/phrase/utils/phrase.utils'
 
 import Message from 'src/decorators/message.decorator'
 import OnAction from 'src/decorators/on-action.decorator'
@@ -44,10 +45,20 @@ class BotController {
     this[callbackQueryHandler](query)
   }
 
-  [callbackQueryHandlers.handleGetPhrase](query) {
-    const callbackQueryText = query.data.replace(
-      matchTextBetweenSquareBrackets,
-      '',
+  async [callbackQueryHandlers.handleGetPhrase](query) {
+    const { data, message } = query
+    const callbackQueryText = data.replace(matchTextBetweenSquareBrackets, '')
+    const { phraseService } = this.bot.phraseModule
+    const foundPhrase = await phraseService.findItem({
+      text: callbackQueryText,
+    })
+
+    this.bot.services.botApiService.sendMessage(
+      message.chat.id,
+      formatPhraseForSend(foundPhrase),
+      {
+        parse_mode: 'HTML',
+      },
     )
   }
 

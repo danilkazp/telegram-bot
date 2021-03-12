@@ -1,4 +1,4 @@
-import { get as _get } from 'lodash'
+import { get as _get, uniq as _uniq } from 'lodash'
 
 export const getReversoExamples = (reversoResult) => {
   const examples = _get(reversoResult, 'context.examples', [])
@@ -9,11 +9,15 @@ export const getReversoExamples = (reversoResult) => {
   }))
 }
 function getTextBetweenSquareBrackets(text) {
-  return text.replace( /(^.*\[|\].*$)/g, '' );
+  return text.replace(/(^.*\[|\].*$)/g, '')
 }
 
 export const getGoogleCorrectedText = (googleResult): string => {
   const correctedText = _get(googleResult, 'from.text.value', '')
 
   return getTextBetweenSquareBrackets(correctedText)
+}
+
+export const getUniqTranslation = (translation: string[] = []): string[] => {
+  return _uniq(translation.map((t) => t.toLowerCase()))
 }

@@ -3,6 +3,7 @@ import { uniq as _uniq } from 'lodash'
 import {
   getGoogleCorrectedText,
   getReversoExamples,
+  getUniqTranslation,
 } from 'modules/translator/translator.utils'
 
 import GoogleTranslateService from 'src/services/google-translate.service'
@@ -26,10 +27,11 @@ class TranslatorModule {
       correctedText || textToTranslate,
     )
     const examples = getReversoExamples(reversoResult)
+    const uniqReversoTranslation = getUniqTranslation(reversoResult.translation)
 
     return {
-      translation: _uniq([
-        ...reversoResult.translation,
+      translation: getUniqTranslation([
+        ...uniqReversoTranslation,
         googleTranslatorResult.text,
       ]),
       examples,
