@@ -1,8 +1,12 @@
-import { callbackQueryHandlers } from 'modules/bot/bot.controller'
-import { defaultPagination } from 'modules/phrase/phrase.constants'
+import { callbackQueryHandlers } from 'modules/bot/bot.constants'
+import { IBotMsgInlineKeyboard, IBotQuery } from 'modules/bot/bot.interface'
+import {
+  defaultPagination,
+  matchTextBetweenSquareBrackets,
+} from 'modules/phrase/phrase.constants'
 import { IPagination } from 'modules/phrase/phrase.interface'
 
-export const matchMessage = (phrase, msg) => {
+export const isTextEqual = (phrase: string, msg: string): boolean => {
   const searchPhrase = phrase.toLowerCase()
 
   return msg.toString().toLowerCase() === searchPhrase
@@ -34,7 +38,7 @@ export const getPageByPagination = (pagination: IPagination): number => {
 export const getInlineKeyboardsPagination = (
   currentPage = 1,
   totalPages = 1,
-): any[] => {
+): IBotMsgInlineKeyboard[] => {
   const correctCurrentPage = currentPage || 1
   const prevPage = correctCurrentPage - 1
   const nextPage = correctCurrentPage + 1
@@ -56,4 +60,8 @@ export const getInlineKeyboardsPagination = (
       callback_data: `[${callbackQueryHandlers.handlePhrasesPagination}]${correctNextPage}`,
     },
   ]
+}
+
+export const getCallbackQueryHandler = (query: IBotQuery): string => {
+  return query.data.match(matchTextBetweenSquareBrackets)[1]
 }

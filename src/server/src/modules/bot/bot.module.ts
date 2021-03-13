@@ -4,7 +4,7 @@ import TelegramBot from 'node-telegram-bot-api'
 
 import BotApiService from 'modules/bot/bot-api.service'
 import BotController from 'modules/bot/bot.controller'
-import { matchMessage } from 'modules/bot/utils/bot.utils'
+import { isTextEqual } from 'modules/bot/utils/bot.utils'
 import PhraseModule from 'modules/phrase/phrase.module'
 import TranslatorModule from 'modules/translator/translator.module'
 
@@ -88,7 +88,7 @@ class BotModule {
       console.log('###-msg', msg)
 
       const foundSubscriber = this.subscribersOfMessages.find((subscriber) => {
-        return matchMessage(subscriber.matchMessage, msg.text)
+        return isTextEqual(subscriber.matchMessage, msg.text)
       })
 
       if (foundSubscriber) {

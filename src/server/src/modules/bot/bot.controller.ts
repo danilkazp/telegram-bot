@@ -1,26 +1,20 @@
+import {
+  callbackQueryHandlers,
+  messages,
+  titles,
+} from 'modules/bot/bot.constants'
+import { IBotMsg, IBotQuery } from 'modules/bot/bot.interface'
 import BotModule from 'modules/bot/bot.module'
-import { getPaginationByPage } from 'modules/bot/utils/bot.utils'
+import {
+  getCallbackQueryHandler,
+  getPaginationByPage,
+} from 'modules/bot/utils/bot.utils'
+import { matchTextBetweenSquareBrackets } from 'modules/phrase/phrase.constants'
 import { formatPhraseForSend } from 'modules/phrase/utils/phrase.utils'
 
 import Message from 'src/decorators/message.decorator'
 import OnAction from 'src/decorators/on-action.decorator'
 import OnText from 'src/decorators/on-text.decorator'
-
-const messages = {
-  getPhrasesList: 'Get phrases list',
-  getPhrase: 'Get phrase',
-}
-
-const titles = {
-  phrasesList: 'Your phrases:',
-}
-
-export const callbackQueryHandlers = {
-  handleGetPhrase: 'handleGetPhrase',
-  handlePhrasesPagination: 'handlePhrasesPagination',
-}
-
-const matchTextBetweenSquareBrackets = /\[(.*)\]/
 
 class BotController {
   constructor(private readonly bot: BotModule) {
@@ -28,7 +22,7 @@ class BotController {
   }
 
   @OnText(/\/start/)
-  handleStartMessage(msg) {
+  handleStartMessage(msg: IBotMsg): void {
     this.bot.services.botApiService.sendMessage(msg.chat.id, 'Welcome', {
       reply_markup: {
         keyboard: [[messages.getPhrasesList, messages.getPhrase]],
@@ -37,18 +31,18 @@ class BotController {
   }
 
   @OnAction('callback_query')
-  handleCallbackQuery(query) {
-    const callbackQueryHandler = query.data.match(
-      matchTextBetweenSquareBrackets,
-    )[1]
+  handleCallbackQuery(query: IBotQuery): void {
+    const callbackQueryHandler = getCallbackQueryHandler(query)
 
     this[callbackQueryHandler](query)
   }
 
-  async [callbackQueryHandlers.handleGetPhrase](query) {
+  async [callbackQueryHandlers.handleGetPhrase](
+    query: IBotQuery,
+  ): Promise<void> {
+    const { phraseService } = this.bot.phraseModule
     const { data, message } = query
     const callbackQueryText = data.replace(matchTextBetweenSquareBrackets, '')
-    const { phraseService } = this.bot.phraseModule
     const foundPhrase = await phraseService.findItem({
       text: callbackQueryText,
     })
@@ -62,7 +56,9 @@ class BotController {
     )
   }
 
-  async [callbackQueryHandlers.handlePhrasesPagination](query): Promise<any> {
+  async [callbackQueryHandlers.handlePhrasesPagination](
+    query: IBotQuery,
+  ): Promise<void> {
     const { chat, message_id } = query.message
     const { phraseService } = this.bot.phraseModule
     const nextPage = +query.data.replace(matchTextBetweenSquareBrackets, '')
@@ -84,7 +80,7 @@ class BotController {
   }
 
   @Message('Hello')
-  handleHelloMessage(msg) {
+  handleHelloMessage(msg: IBotMsg): void {
     this.bot.services.botApiService.sendMessage(
       msg.chat.id,
       `Hello ${msg.chat.username}`,
@@ -92,7 +88,7 @@ class BotController {
   }
 
   @Message(messages.getPhrasesList)
-  async handleGetListMessage(msg) {
+  async handleGetListMessage(msg: IBotMsg): Promise<void> {
     const { id: userId } = msg.from
     const { phraseModule } = this.bot
     const { phraseService } = phraseModule
@@ -112,7 +108,7 @@ class BotController {
   }
 
   @Message(messages.getPhrase)
-  async handleGetPhraseMessage(msg) {
+  async handleGetPhraseMessage(msg: IBotMsg): Promise<void> {
     const { id: userId } = msg.from
     const { phraseModule } = this.bot
     const { phraseService } = phraseModule
@@ -131,7 +127,7 @@ class BotController {
     })
   }
 
-  handleNotMatchedMessages = async (msg) => {
+  handleNotMatchedMessages = async (msg: IBotMsg): Promise<void> => {
     if (msg.text.startsWith('/')) return
 
     const { phraseModule } = this.bot

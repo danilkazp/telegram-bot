@@ -1,4 +1,4 @@
-import { IPhrase } from 'modules/phrase/phrase.interface'
+import { IPhrase, IPhraseExample } from 'modules/phrase/phrase.interface'
 
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace)
@@ -9,16 +9,16 @@ export const formatPhraseForSend = (phrase: IPhrase): string => {
   let translated = ''
   let examples = ''
 
-  phrase.translation.forEach((translatedText, index) => {
+  phrase.translation.forEach((translatedText: string, index) => {
     const isLastText = index === phrase.translation.length - 1
 
     translated = translated + translatedText
-    
+
     if (!isLastText) {
       translated = translated + ', '
     }
   })
-  phrase.examples.forEach((example) => {
+  phrase.examples.forEach((example: IPhraseExample) => {
     examples +=
       '<i>from:</i> ' +
       example.from +
