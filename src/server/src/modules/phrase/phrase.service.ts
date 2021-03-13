@@ -1,6 +1,6 @@
 import { callbackQueryHandlers } from 'modules/bot/bot.constants'
 import {
-  getInlineKeyboards,
+  getReplayMockup,
   getInlineKeyboardsPagination,
   getPageByPagination,
 } from 'modules/bot/utils/bot.utils'
@@ -60,7 +60,7 @@ class PhraseService {
           `[${callbackQueryHandlers.handleGetPhrase}]` + phrase.text,
       }
     })
-    const phrasesInlineKeyboards = getInlineKeyboards(foundPhrasesList, 1)
+    const phrasesInlineKeyboards = getReplayMockup(foundPhrasesList, 1)
 
     return [
       ...phrasesInlineKeyboards,

@@ -12,7 +12,7 @@ export const isTextEqual = (phrase: string, msg: string): boolean => {
   return msg.toString().toLowerCase() === searchPhrase
 }
 
-export const getInlineKeyboards = (array = [], subArraySize = 3): any[] => {
+export const getReplayMockup = (array = [], subArraySize = 3): any[] => {
   const subarray = []
   for (let i = 0; i < Math.ceil(array.length / subArraySize); i++) {
     subarray[i] = array.slice(i * subArraySize, i * subArraySize + subArraySize)
@@ -66,9 +66,8 @@ export const getCallbackQueryHandler = (query: IBotQuery): string => {
   return query.data.match(matchTextBetweenSquareBrackets)[1]
 }
 
-
 export const getStartMarkup = () => {
   return {
-    keyboard: [[commands.getPhrasesList], [commands.settings]],
+    keyboard: getReplayMockup([commands.getPhrasesList, commands.settings], 1),
   }
 }

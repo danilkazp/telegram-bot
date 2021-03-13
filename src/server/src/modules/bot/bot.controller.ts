@@ -8,6 +8,7 @@ import BotModule from 'modules/bot/bot.module'
 import {
   getCallbackQueryHandler,
   getPaginationByPage,
+  getReplayMockup,
   getStartMarkup,
 } from 'modules/bot/utils/bot.utils'
 import { matchTextBetweenSquareBrackets } from 'modules/phrase/phrase.constants'
@@ -34,6 +35,50 @@ class BotController {
     const callbackQueryHandler = getCallbackQueryHandler(query)
 
     this[callbackQueryHandler](query)
+  }
+
+  @Message('Hello')
+  handleHelloMessage(msg: IBotMsg): void {
+    this.bot.services.botApiService.sendMessage(
+      msg.chat.id,
+      `Hello ${msg.chat.username}`,
+    )
+  }
+
+  @Message(commands.settings)
+  handleSettingsMessage(msg: IBotMsg): void {
+    this.bot.services.botApiService.sendMessage(msg.chat.id, 'Your settings', {
+      reply_markup: {
+        keyboard: getReplayMockup([commands.editPhrase, commands.backToHome], 1),
+      },
+    })
+  }
+
+  @Message(commands.backToHome)
+  handleBackToHomeMessage(msg: IBotMsg): void {
+    this.bot.services.botApiService.sendMessage(msg.chat.id, titles.home, {
+      reply_markup: getStartMarkup(),
+    })
+  }
+
+  @Message(commands.getPhrasesList)
+  async handleGetListMessage(msg: IBotMsg): Promise<void> {
+    const { id: userId } = msg.from
+    const { phraseModule } = this.bot
+    const { phraseService } = phraseModule
+    const phrasesInlineKeywords = await phraseService.getPhrasesInlineKeywords({
+      userId,
+    })
+
+    this.bot.services.botApiService.sendMessage(
+      msg.chat.id,
+      titles.phrasesList,
+      {
+        reply_markup: {
+          inline_keyboard: phrasesInlineKeywords,
+        },
+      },
+    )
   }
 
   async [callbackQueryHandlers.handleGetPhrase](
@@ -76,50 +121,6 @@ class BotController {
         inline_keyboard: phrasesInlineKeywords,
       },
     })
-  }
-
-  @Message('Hello')
-  handleHelloMessage(msg: IBotMsg): void {
-    this.bot.services.botApiService.sendMessage(
-      msg.chat.id,
-      `Hello ${msg.chat.username}`,
-    )
-  }
-
-  @Message(commands.settings)
-  handleSettingsMessage(msg: IBotMsg): void {
-    this.bot.services.botApiService.sendMessage(msg.chat.id, 'Your settings', {
-      reply_markup: {
-        keyboard: [[commands.editPhrase], [commands.backToHome]],
-      },
-    })
-  }
-
-  @Message(commands.backToHome)
-  handleBackToHomeMessage(msg: IBotMsg): void {
-    this.bot.services.botApiService.sendMessage(msg.chat.id, titles.home, {
-      reply_markup: getStartMarkup(),
-    })
-  }
-
-  @Message(commands.getPhrasesList)
-  async handleGetListMessage(msg: IBotMsg): Promise<void> {
-    const { id: userId } = msg.from
-    const { phraseModule } = this.bot
-    const { phraseService } = phraseModule
-    const phrasesInlineKeywords = await phraseService.getPhrasesInlineKeywords({
-      userId,
-    })
-
-    this.bot.services.botApiService.sendMessage(
-      msg.chat.id,
-      titles.phrasesList,
-      {
-        reply_markup: {
-          inline_keyboard: phrasesInlineKeywords,
-        },
-      },
-    )
   }
 
   handleNotMatchedMessages = async (msg: IBotMsg): Promise<void> => {
