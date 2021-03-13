@@ -1,6 +1,6 @@
 import {
   callbackQueryHandlers,
-  messages,
+  commands,
   titles,
 } from 'modules/bot/bot.constants'
 import { IBotMsg, IBotQuery } from 'modules/bot/bot.interface'
@@ -8,6 +8,7 @@ import BotModule from 'modules/bot/bot.module'
 import {
   getCallbackQueryHandler,
   getPaginationByPage,
+  getStartMarkup,
 } from 'modules/bot/utils/bot.utils'
 import { matchTextBetweenSquareBrackets } from 'modules/phrase/phrase.constants'
 import { formatPhraseForSend } from 'modules/phrase/utils/phrase.utils'
@@ -24,9 +25,7 @@ class BotController {
   @OnText(/\/start/)
   handleStartMessage(msg: IBotMsg): void {
     this.bot.services.botApiService.sendMessage(msg.chat.id, 'Welcome', {
-      reply_markup: {
-        keyboard: [[messages.getPhrasesList, messages.getPhrase]],
-      },
+      reply_markup: getStartMarkup(),
     })
   }
 
@@ -87,7 +86,23 @@ class BotController {
     )
   }
 
-  @Message(messages.getPhrasesList)
+  @Message(commands.settings)
+  handleSettingsMessage(msg: IBotMsg): void {
+    this.bot.services.botApiService.sendMessage(msg.chat.id, 'Your settings', {
+      reply_markup: {
+        keyboard: [[commands.editPhrase], [commands.backToHome]],
+      },
+    })
+  }
+
+  @Message(commands.backToHome)
+  handleBackToHomeMessage(msg: IBotMsg): void {
+    this.bot.services.botApiService.sendMessage(msg.chat.id, titles.home, {
+      reply_markup: getStartMarkup(),
+    })
+  }
+
+  @Message(commands.getPhrasesList)
   async handleGetListMessage(msg: IBotMsg): Promise<void> {
     const { id: userId } = msg.from
     const { phraseModule } = this.bot
@@ -105,26 +120,6 @@ class BotController {
         },
       },
     )
-  }
-
-  @Message(messages.getPhrase)
-  async handleGetPhraseMessage(msg: IBotMsg): Promise<void> {
-    const { id: userId } = msg.from
-    const { phraseModule } = this.bot
-    const { phraseService } = phraseModule
-    const foundPhrase = await phraseService.findItem({ userId })
-
-    const phraseMsg = `**${foundPhrase.text}**`
-    let translatingMsg = `Translation:`
-
-    foundPhrase.translation.forEach((translatedText) => {
-      translatingMsg += '\n - ' + translatedText
-    })
-
-    const messagesToSent = [phraseMsg, translatingMsg]
-    messagesToSent.forEach((messageToSent) => {
-      this.bot.services.botApiService.sendMessage(msg.chat.id, messageToSent)
-    })
   }
 
   handleNotMatchedMessages = async (msg: IBotMsg): Promise<void> => {

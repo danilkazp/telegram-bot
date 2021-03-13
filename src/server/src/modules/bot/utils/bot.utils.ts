@@ -1,4 +1,4 @@
-import { callbackQueryHandlers } from 'modules/bot/bot.constants'
+import { callbackQueryHandlers, commands } from 'modules/bot/bot.constants'
 import { IBotMsgInlineKeyboard, IBotQuery } from 'modules/bot/bot.interface'
 import {
   defaultPagination,
@@ -64,4 +64,11 @@ export const getInlineKeyboardsPagination = (
 
 export const getCallbackQueryHandler = (query: IBotQuery): string => {
   return query.data.match(matchTextBetweenSquareBrackets)[1]
+}
+
+
+export const getStartMarkup = () => {
+  return {
+    keyboard: [[commands.getPhrasesList], [commands.settings]],
+  }
 }

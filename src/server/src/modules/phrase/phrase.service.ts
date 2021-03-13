@@ -1,7 +1,8 @@
-import { callbackQueryHandlers } from 'modules/bot/bot.controller'
+import { callbackQueryHandlers } from 'modules/bot/bot.constants'
 import {
   getInlineKeyboards,
-  getInlineKeyboardsPagination, getPageByPagination,
+  getInlineKeyboardsPagination,
+  getPageByPagination,
 } from 'modules/bot/utils/bot.utils'
 import { defaultPagination } from 'modules/phrase/phrase.constants'
 import { IPagination, IPhrase } from 'modules/phrase/phrase.interface'
@@ -48,7 +49,7 @@ class PhraseService {
   ) => {
     const { limit } = phraseListPagination
     const phrasesCount = await this.getCount(phraseDto)
-    const currentPage = getPageByPagination(phraseListPagination);
+    const currentPage = getPageByPagination(phraseListPagination)
     const allPages = +(phrasesCount / limit).toFixed(0)
 
     const foundPhrases = await this.findList(phraseDto, phraseListPagination)
