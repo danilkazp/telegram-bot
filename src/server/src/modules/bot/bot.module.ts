@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import UserModule from 'modules/user/user.module'
 
 import TelegramBot from 'node-telegram-bot-api'
 
@@ -11,8 +12,11 @@ import TranslatorModule from 'modules/translator/translator.module'
 class BotModule {
   public telegramBot: any
   public botController: BotController
+
   public phraseModule: PhraseModule
+  public userModule: UserModule
   public translatorModule: TranslatorModule
+
   public services: Record<string, any> = {}
   private subscribersOfCommands: Record<string, any>[] = []
   private subscribersOfMessages: Record<string, any>[] = []
@@ -36,6 +40,7 @@ class BotModule {
   initModules() {
     this.translatorModule = new TranslatorModule()
     this.phraseModule = new PhraseModule(this)
+    this.userModule = new UserModule(this)
   }
 
   initServices() {

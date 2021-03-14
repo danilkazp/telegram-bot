@@ -2,9 +2,12 @@ import mongoose from 'mongoose'
 
 const PhraseSchema = new mongoose.Schema(
   {
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
     userId: {
       type: String,
-      default: null
+      default: null,
     },
     text: {
       type: String,

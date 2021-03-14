@@ -1,5 +1,4 @@
-import { Model, MongooseFilterQuery, QueryUpdateOptions } from 'mongoose'
-
+import { PhraseDto } from 'modules/phrase/dto/phrase.dto'
 import { IPagination, IPhrase } from 'modules/phrase/phrase.interface'
 
 export class PhraseRepository {
@@ -11,19 +10,26 @@ export class PhraseRepository {
     return 'Phrase not found'
   }
 
-  async create(phraseDto: IPhrase): Promise<IPhrase> {
+  async create(phraseDto: PhraseDto): Promise<IPhrase> {
     return await this.phraseModel.create(phraseDto)
   }
 
-  async item(phraseDto?): Promise<IPhrase> {
+  async updateOne(phraseDto: PhraseDto): Promise<IPhrase> {
+    return await this.phraseModel.updateOne(phraseDto)
+  }
+
+  async item(phraseDto?: PhraseDto): Promise<IPhrase> {
     return await this.phraseModel.findOne(phraseDto)
   }
 
-  async getCount(phraseDto?): Promise<number> {
+  async getCount(phraseDto?: PhraseDto): Promise<number> {
     return await this.phraseModel.count(phraseDto)
   }
 
-  async list(phraseDto?, pagination?: IPagination): Promise<IPhrase[]> {
+  async list(
+    phraseDto?: PhraseDto,
+    pagination?: IPagination,
+  ): Promise<IPhrase[]> {
     if (pagination) {
       return await this.phraseModel
         .find(phraseDto)

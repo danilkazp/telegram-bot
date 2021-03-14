@@ -1,4 +1,5 @@
 export interface IPhrase {
+  _id?: number
   userId: number
   text: string
   translation: string[]

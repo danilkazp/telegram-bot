@@ -20,10 +20,10 @@ export const formatPhraseForSend = (phrase: IPhrase): string => {
   })
   phrase.examples.forEach((example: IPhraseExample) => {
     examples +=
-      '<i>from:</i> ' +
+      '🇺🇸 ' +
       example.from +
       '\n' +
-      '<i>to:</i> ' +
+      '🇷🇺 ' +
       example.to +
       '\n\n'
   })

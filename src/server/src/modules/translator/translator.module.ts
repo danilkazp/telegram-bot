@@ -23,6 +23,7 @@ class TranslatorModule {
       textToTranslate,
     )
     const correctedText = getGoogleCorrectedText(googleTranslatorResult)
+    // TODO: handle not found with incorrect text
     const reversoResult = await this.reversoTranslator.getTranslation(
       correctedText || textToTranslate,
     )

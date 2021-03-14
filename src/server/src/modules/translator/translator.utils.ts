@@ -1,8 +1,11 @@
 import { get as _get, uniq as _uniq } from 'lodash'
 
 export const getReversoExamples = (reversoResult) => {
+  console.log('###-reversoResult', reversoResult)
+  
   const examples = _get(reversoResult, 'context.examples', [])
-
+  console.log('###-examples', examples)
+  
   return examples.map((item) => ({
     from: item.from,
     to: item.to,

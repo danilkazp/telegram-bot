@@ -1,4 +1,4 @@
-import { callbackQueryHandlers, commands } from 'modules/bot/bot.constants'
+import { botHandlers, commands } from 'modules/bot/bot.constants'
 import { IBotMsgInlineKeyboard, IBotQuery } from 'modules/bot/bot.interface'
 import {
   defaultPagination,
@@ -49,15 +49,15 @@ export const getInlineKeyboardsPagination = (
   return [
     {
       text: '<',
-      callback_data: `[${callbackQueryHandlers.handlePhrasesPagination}]${correctPrevPage}`,
+      callback_data: `[${botHandlers.handlePhrasesPagination}]${correctPrevPage}`,
     },
     {
       text: `${correctCurrentPage}/${correctTotalPages}`,
-      callback_data: `[${callbackQueryHandlers.handlePhrasesPagination}]${correctCurrentPage}`,
+      callback_data: `[${botHandlers.handlePhrasesPagination}]${correctCurrentPage}`,
     },
     {
       text: '>',
-      callback_data: `[${callbackQueryHandlers.handlePhrasesPagination}]${correctNextPage}`,
+      callback_data: `[${botHandlers.handlePhrasesPagination}]${correctNextPage}`,
     },
   ]
 }

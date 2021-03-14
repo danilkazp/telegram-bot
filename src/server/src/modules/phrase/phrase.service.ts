@@ -1,9 +1,10 @@
-import { callbackQueryHandlers } from 'modules/bot/bot.constants'
+import { botHandlers } from 'modules/bot/bot.constants'
 import {
-  getReplayMockup,
   getInlineKeyboardsPagination,
   getPageByPagination,
+  getReplayMockup,
 } from 'modules/bot/utils/bot.utils'
+import { PhraseDto } from 'modules/phrase/dto/phrase.dto'
 import { defaultPagination } from 'modules/phrase/phrase.constants'
 import { IPagination, IPhrase } from 'modules/phrase/phrase.interface'
 import { PhraseRepository } from 'modules/phrase/phrase.repository'
@@ -31,15 +32,23 @@ class PhraseService {
     return await this.phraseRepository.create(phraseDto)
   }
 
-  findItem = async (phraseDto?) => {
+  updateOne = async (phraseDto: PhraseDto): Promise<IPhrase> => {
+    return await this.phraseRepository.updateOne(phraseDto)
+  }
+
+  findItem = async (phraseDto?: PhraseDto): Promise<IPhrase> => {
+    // TODO: create notFound fallback
     return await this.phraseRepository.item(phraseDto)
   }
 
-  findList = async (phraseDto?, pagination?: IPagination) => {
+  findList = async (
+    phraseDto?: PhraseDto,
+    pagination?: IPagination,
+  ): Promise<IPhrase[]> => {
     return await this.phraseRepository.list(phraseDto, pagination)
   }
 
-  getCount = async (phraseDto?) => {
+  getCount = async (phraseDto?: PhraseDto): Promise<number> => {
     return await this.phraseRepository.getCount(phraseDto)
   }
 
@@ -56,8 +65,7 @@ class PhraseService {
     const foundPhrasesList = foundPhrases.map((phrase) => {
       return {
         text: phrase.text,
-        callback_data:
-          `[${callbackQueryHandlers.handleGetPhrase}]` + phrase.text,
+        callback_data: `[${botHandlers.handleGetPhrase}]` + phrase.text,
       }
     })
     const phrasesInlineKeyboards = getReplayMockup(foundPhrasesList, 1)
